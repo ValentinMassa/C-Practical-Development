@@ -23,9 +23,12 @@ void cambiarTonalidad(Pixeles*, const float, const int);
 void transformarAGris (Pixeles *, const float, const int);
 void aumentarContraste (Pixeles * , const float , const int);
 void reducirContraste (Pixeles *, const float, const int);
-bool ActualizarDatosHeaderRecorar(HeaderBmp*, AdicDataBmp *, int);
-void ImpactarMarizimagenRecortar(Pixeles **, HeaderBmp * ,unsigned char * , int , FILE* );
-
+bool ActualizarDatosHeader(HeaderBmp*, AdicDataBmp *, const int, const int);
+void ImpactarMatrizmagen(Pixeles **, const int, const int,unsigned char *, int, FILE*);
+void ImpactarMatrizmagenRotarDerecha(Pixeles **, const int, const int,unsigned char *, int, FILE*);
+void ImpactarMatrizmagenRotarIzquierda(Pixeles **, const int, const int,unsigned char *, int, FILE*);
+void ImpactarMatrizHorizontal(Pixeles **, const int , const int , unsigned char * , int , FILE* );
+void ImpactarMatrizVertical(Pixeles **, const int , const int , unsigned char * , int , FILE* );
 /////////////////CODIGO
 
 void cambiarTonalidad(Pixeles* pixel, const float procentaje, int const color)
@@ -78,15 +81,15 @@ void reducirContraste (Pixeles * pixel, const float porcentaje, const int No2)
     }
 }
 
-bool ActualizarDatosHeaderRecorar(HeaderBmp* Header, AdicDataBmp * Data, int porcentaje)
+bool ActualizarDatosHeader(HeaderBmp* Header, AdicDataBmp * Data, const int alto, const int ancho)
 {
-    Header->palto = (int)( Header->palto * ( ((float)porcentaje)/ ((float)100) ) );
-    Header->pancho = (int)( Header->pancho * ( ((float)porcentaje)/ ((float)100) ) );
+    Header->palto = alto;
+    Header->pancho = ancho;
 
     Data->padding = CalcularPadding(Header->pancho);
     if (!VerificarYGenerarVectorDeDatosPadding(Data))
     {
-        puts("ERROR DE ASIGNACION DE MEMORIA EN FUNCION: ActualizarDatosHeaderRecorar");
+        puts("ERROR DE ASIGNACION DE MEMORIA EN FUNCION: ActualizarDatosHeader");
         return false;
     }
     //Recibimos una copia de header y una copia de RestoDataHeader, de lo cual usaremos
@@ -96,6 +99,7 @@ bool ActualizarDatosHeaderRecorar(HeaderBmp* Header, AdicDataBmp * Data, int por
     Header->tamano = Header ->tamImag + Header->inicioDatos;
     return true;
 }
+
 
 
 
@@ -125,7 +129,6 @@ bool imagenTransformada(VecEffectList * Datos, TDAVectList* vecImagen,
         HeaderBmp * Header , FILE* ImagenFinal)
 {
     float valor =0;
-
     AdicDataBmp CopiaAdicData;
     HeaderBmp CopiaHeader;
 
@@ -194,7 +197,6 @@ bool imagenTransformada(VecEffectList * Datos, TDAVectList* vecImagen,
         {
 
         CopiaHeader = *Header;
-
         CopiaAdicData.CabeceraDIBext = NULL;
         CopiaAdicData.PaddingAdd = NULL;
         CopiaAdicData.padding = 0;
@@ -204,14 +206,18 @@ bool imagenTransformada(VecEffectList * Datos, TDAVectList* vecImagen,
 
         //Copiamos las estructuras de datos ya que sino estariamos editando la iamgen original,
         //siendo que si el primer efecto es este, los siguientes trabajarian con una imagen recortada.
-        if(!ActualizarDatosHeaderRecorar(&CopiaHeader, &CopiaAdicData,Datos->ProcentajeAAgregar))
+        if(!(ActualizarDatosHeader(&CopiaHeader, &CopiaAdicData,
+                                         ( (int)( Header->palto * ( ((float)Datos->ProcentajeAAgregar/ ((float)100) ) ))  ),
+                                         ( (int)( Header->pancho * ( ((float)Datos->ProcentajeAAgregar)/ ((float)100) ) )) )
+             )
+           )
         {
             puts("FUNCION RECORTAR TUVO UN ERROR EN MEMORIA, SE OMITIRA ESTA FUNCION");
             return true;
         }
         rewind(ImagenFinal);
         EscribirHeaderEnImagNueva(&CopiaHeader, ImagenFinal, RestoDataImage->CabeceraDIBext, TamHeaderB);
-        ImpactarMarizimagenRecortar(Matriz,&CopiaHeader , CopiaAdicData.PaddingAdd,
+        ImpactarMatrizmagen(Matriz, CopiaHeader.palto, CopiaHeader.pancho , CopiaAdicData.PaddingAdd,
                             CopiaAdicData.padding, ImagenFinal);
 
         free(CopiaAdicData.PaddingAdd);  //liberamos el vector padding.
@@ -220,24 +226,67 @@ bool imagenTransformada(VecEffectList * Datos, TDAVectList* vecImagen,
         return true;
     }
 
+    if (strcmp(Datos->NameEffect, "--rotar-derecha")==0 || strcmp(Datos->NameEffect, "--rotar-izquierda")==0)
+    {
+        CopiaHeader = *Header;
+        CopiaAdicData.CabeceraDIBext = NULL;
+        CopiaAdicData.PaddingAdd = NULL;
+        CopiaAdicData.padding = 0;
+
+        if(!(ActualizarDatosHeader(&CopiaHeader, &CopiaAdicData, Header->pancho, Header->palto)))
+        {
+            puts("FUNCION ROTAR TUVO UN ERROR EN MEMORIA, SE OMITIRA ESTA FUNCION");
+            return true;
+        }
+        rewind(ImagenFinal);
+        EscribirHeaderEnImagNueva(&CopiaHeader, ImagenFinal, RestoDataImage->CabeceraDIBext, TamHeaderB);
+
+        if(strcmp(Datos->NameEffect, "--rotar-derecha")==0)
+        {
+            ImpactarMatrizmagenRotarDerecha(Matriz, CopiaHeader.palto, CopiaHeader.pancho, CopiaAdicData.PaddingAdd,
+                            CopiaAdicData.padding, ImagenFinal);
+        }
+        else
+        {
+            ImpactarMatrizmagenRotarIzquierda(Matriz, CopiaHeader.palto, CopiaHeader.pancho, CopiaAdicData.PaddingAdd,
+                            CopiaAdicData.padding, ImagenFinal);
+        }
+
+        free(CopiaAdicData.PaddingAdd);
+        return true;
+    }
 
 
+    if ( (strcmp(Datos->NameEffect, "--espejar-horizontal")==0) || (strcmp(Datos->NameEffect, "--espejar-vertical") ==0 ) )
+    {
+        rewind(ImagenFinal);
+        EscribirHeaderEnImagNueva(Header, ImagenFinal, RestoDataImage->CabeceraDIBext, TamHeaderB);
 
+        if(strcmp(Datos->NameEffect, "--espejar-vertical")==0)
+        {
+                ImpactarMatrizVertical(Matriz, Header->palto, Header->pancho, RestoDataImage->PaddingAdd,
+                            RestoDataImage->padding, ImagenFinal);
+        }
+        else
+        {
+            ImpactarMatrizHorizontal(Matriz, Header->palto, Header->pancho, RestoDataImage->PaddingAdd,
+                            RestoDataImage->padding, ImagenFinal);
+        }
+        return true;
 
-
+    }
 
     return true;
 }
 
-
-void ImpactarMarizimagenRecortar(Pixeles **MatrizImagen, HeaderBmp * Header,
+void ImpactarMatrizmagen(Pixeles **MatrizImagen, const int alto, const int ancho,
                           unsigned char * PaddingPunt, int padding, FILE* imagenNueva)
 {
     int i, j;
 
-    for(i=0; i<(Header->palto); i++)
+    for(i=0; i<(alto); i++)
     {
-        for(j=0;j<(Header->pancho); j++)
+        for(j=0;j<(ancho); j++)
         {
             fwrite(&MatrizImagen[i][j], sizeof(Pixeles), 1, imagenNueva);
         }
@@ -247,6 +296,79 @@ void ImpactarMarizimagenRecortar(Pixeles **MatrizImagen, HeaderBmp * Header,
     }
 
 }
+void ImpactarMatrizVertical(Pixeles **MatrizImagen, const int alto, const int ancho,
+                          unsigned char * PaddingPunt, int padding, FILE* imagenNueva)
+{
+    int i, j;
+
+    for(i= alto -1 ; i >= 0; i--)
+    {
+        for(j= 0; j < ancho; j++)
+        {
+            fwrite(&MatrizImagen[i][j], sizeof(Pixeles), 1, imagenNueva);
+        }
+
+        if(padding!= 0)
+            fwrite(PaddingPunt, padding, 1, imagenNueva);
+    }
+
+}
+
+void ImpactarMatrizHorizontal(Pixeles **MatrizImagen, const int alto, const int ancho,
+                          unsigned char * PaddingPunt, int padding, FILE* imagenNueva)
+{
+    int i, j;
+
+    for(i= 0; i < alto; i++)
+    {
+        for(j= ancho -1; j >= 0; j--)
+        {
+            fwrite(&MatrizImagen[i][j], sizeof(Pixeles), 1, imagenNueva);
+        }
+
+        if(padding!= 0)
+            fwrite(PaddingPunt, padding, 1, imagenNueva);
+    }
+
+}
+
+void ImpactarMatrizmagenRotarDerecha(Pixeles **MatrizImagen, const int alto, const int ancho,
+                          unsigned char * PaddingPunt, int padding, FILE* imagenNueva)
+{
+    int i, j;
+
+    for(i=0; i<(alto); i++)
+    {
+        for(j=0;j<(ancho); j++)
+        {
+            fwrite(&MatrizImagen[j][i], sizeof(Pixeles), 1, imagenNueva);
+        }
+
+        if(padding!= 0)
+            fwrite(PaddingPunt, padding, 1, imagenNueva);
+    }
+
+}
+
+void ImpactarMatrizmagenRotarIzquierda(Pixeles **MatrizImagen, const int alto, const int ancho,
+                          unsigned char * PaddingPunt, int padding, FILE* imagenNueva)
+{
+    int i, j;
+
+    for(i = 0; i < alto; i++)
+    {
+        for(j= (ancho -1); j>=(0); j--)
+        {
+            fwrite(&MatrizImagen[j][i], sizeof(Pixeles), 1, imagenNueva);
+        }
+
+        if(padding!= 0)
+            fwrite(PaddingPunt, padding, 1, imagenNueva);
+    }
+
+}
+
+
 
 void EscribirHeaderEnImagNueva(HeaderBmp * Header, FILE* imagen,
                                 unsigned char * restoHeader, const int tamHeader)
