@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="359.bmp --tonalidad-azul=100 --tonalidad-verde=100 --escala-de-grises --aumentar-contraste=100 --tonalidad-roja=100 --reducir-contraste=9 " />
+				<Option parameters="359.bmp  --recortar=60 " />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
@@ -47,6 +47,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Funciones_Tomadin.h" />
+		<Unit filename="Soporte_Alfalfa.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="TDA_VECTOR.c">
 			<Option compilerVar="CC" />
 		</Unit>

@@ -116,3 +116,59 @@
 	"Funciones_Resano.h"
 	"TDA_VECTOR.h"
 
+1727065414 source:c:\users\valee\desktop\todo_valen\facultad\topicos de programacion\cursada 2c2024\tp_bitmap_git\tptopicosalfalfa-valentin_branch\tptopicosalfalfa-valentin_branch\funciones_massa.c
+	"main.h"
+	"TDA_VECTOR.h"
+	"Funciones_Massa.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
+1727065437 c:\users\valee\desktop\todo_valen\facultad\topicos de programacion\cursada 2c2024\tp_bitmap_git\tptopicosalfalfa-valentin_branch\tptopicosalfalfa-valentin_branch\main.h
+	<stdbool.h>
+
+1726948214 c:\users\valee\desktop\todo_valen\facultad\topicos de programacion\cursada 2c2024\tp_bitmap_git\tptopicosalfalfa-valentin_branch\tptopicosalfalfa-valentin_branch\tda_vector.h
+	<stdbool.h>
+	<stdio.h>
+
+1726950981 c:\users\valee\desktop\todo_valen\facultad\topicos de programacion\cursada 2c2024\tp_bitmap_git\tptopicosalfalfa-valentin_branch\tptopicosalfalfa-valentin_branch\funciones_massa.h
+	"main.h"
+	"TDA_VECTOR.h"
+	<stdbool.h>
+
+1726947509 source:c:\users\valee\desktop\todo_valen\facultad\topicos de programacion\cursada 2c2024\tp_bitmap_git\tptopicosalfalfa-valentin_branch\tptopicosalfalfa-valentin_branch\funciones_tomadin.c
+
+1726949252 source:c:\users\valee\desktop\todo_valen\facultad\topicos de programacion\cursada 2c2024\tp_bitmap_git\tptopicosalfalfa-valentin_branch\tptopicosalfalfa-valentin_branch\tda_vector.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	"TDA_VECTOR.h"
+
+1727060810 source:c:\users\valee\desktop\todo_valen\facultad\topicos de programacion\cursada 2c2024\tp_bitmap_git\tptopicosalfalfa-valentin_branch\tptopicosalfalfa-valentin_branch\funciones_alfalfa.c
+	<stdio.h>
+	<stdlib.h>
+	"Funciones_Alfalfa.h"
+	"Funciones_Massa.h"
+	"Funciones_Resano.h"
+
+1726948213 c:\users\valee\desktop\todo_valen\facultad\topicos de programacion\cursada 2c2024\tp_bitmap_git\tptopicosalfalfa-valentin_branch\tptopicosalfalfa-valentin_branch\funciones_alfalfa.h
+
+1727060810 c:\users\valee\desktop\todo_valen\facultad\topicos de programacion\cursada 2c2024\tp_bitmap_git\tptopicosalfalfa-valentin_branch\tptopicosalfalfa-valentin_branch\funciones_resano.h
+	"main.h"
+	"stdbool.h"
+	"TDA_VECTOR.h"
+
+1727065414 source:c:\users\valee\desktop\todo_valen\facultad\topicos de programacion\cursada 2c2024\tp_bitmap_git\tptopicosalfalfa-valentin_branch\tptopicosalfalfa-valentin_branch\funciones_resano.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"main.h"
+	"Funciones_Resano.h"
+	"TDA_VECTOR.h"
+
+1727065466 source:c:\users\valee\desktop\todo_valen\facultad\topicos de programacion\cursada 2c2024\tp_bitmap_git\tptopicosalfalfa-valentin_branch\tptopicosalfalfa-valentin_branch\soporte_alfalfa.c
+	"main.h"
+	<stdio.h>
+	<stdlib.h>
+

@@ -48,8 +48,7 @@ int CargarHeaderEnMemoriaYcargarData(HeaderBmp*, AdicDataBmp *, FILE*);
 bool VerificarQueEsBMP(HeaderBmp*, FILE*, char, char);
 void LeerHeaderBmp(HeaderBmp*, FILE*);
 bool VerificarYAsignarMemoriaDeSerNecHEaderExtendido(HeaderBmp *, AdicDataBmp *,FILE*, const int);
-int CalcularPadding(int);
-bool VerificarYGenerarVectorDeDatosPadding(AdicDataBmp *);
+
 
 //Cargar Imag en memoria
 void CargarMatrizImagen(FILE * Imagenbmp, Pixeles **MatrizImagen, const int, const int, const int, const int);
@@ -505,21 +504,6 @@ bool VerificarYAsignarMemoriaDeSerNecHEaderExtendido(HeaderBmp *header, AdicData
     return true;
 }
 
-bool VerificarYGenerarVectorDeDatosPadding(AdicDataBmp * data)
-{
-    if(data->padding != 0)
-    {
-        data->PaddingAdd = (unsigned char*)calloc(data->padding, sizeof(unsigned char));
-        if(!data->PaddingAdd)
-        {
-            puts("Error asignacion memoria");
-            data->PaddingAdd = NULL;
-           return false;
-        }
-    }
-    return true;
-}
-
 void VerificarYLiberarMemoriaData(AdicDataBmp * data)
 {
     if(!data->CabeceraDIBext)
@@ -530,16 +514,7 @@ void VerificarYLiberarMemoriaData(AdicDataBmp * data)
         free(data->PaddingAdd);
 }
 
-int CalcularPadding(int pancho)
-{
-    int padding = 0;
 
-    while( ((pancho*3) + padding) % 4 != 0)
-    {
-        padding ++;
-    }
-    return padding;
-}
 
 void CargarMatrizImagen(FILE * Imagenbmp, Pixeles **MatrizImagen, const int alto,
                         const int ancho, const int offset, const int padding)

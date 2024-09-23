@@ -14,6 +14,5 @@
 bool imagenTransformada(VecEffectList *, TDAVectList*, Pixeles ** , AdicDataBmp *,
         HeaderBmp *, FILE*);
 
-//void GenerarNuevaImagen(Pixeles **, HeaderBmp * , AdicDataBmp* , FILE*);
 
 #endif // Funciones_Resano_H_INCLUDED

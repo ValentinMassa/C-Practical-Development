@@ -1,0 +1,18 @@
+efectos faltantes
+
+
+    strcpy(vector[0].NameEffect, "--escala-de-grises");  realizado
+    strcpy(vector[1].NameEffect, "--espejar-horizontal");
+    strcpy(vector[2].NameEffect, "--espejar-vertical");
+    strcpy(vector[3].NameEffect, "--aumentar-contraste="); realizado
+    strcpy(vector[4].NameEffect, "--reducir-contraste="); realizado
+    strcpy(vector[5].NameEffect, "--tonalidad-azul="); realizado
+    strcpy(vector[6].NameEffect, "--tonalidad-verde="); realizado
+    strcpy(vector[7].NameEffect, "--tonalidad-roja="); realizado
+    strcpy(vector[8].NameEffect, "--recortar="); realizado
+    strcpy(vector[9].NameEffect, "--achicar=");
+    strcpy(vector[10].NameEffect, "--rotar-derecha");
+    strcpy(vector[11].NameEffect, "--rotar-izquierda");
+    strcpy(vector[12].NameEffect, "--concatenar-horizontal");
+    strcpy(vector[13].NameEffect, "--concatenar-vertical");
+    strcpy(vector[14].NameEffect, "--comodin");

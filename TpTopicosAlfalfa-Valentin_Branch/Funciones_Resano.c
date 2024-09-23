@@ -8,6 +8,7 @@
 #include "TDA_VECTOR.h"
 
 
+
 ///
 typedef void(*Acciones)(Pixeles*, const float, const int);
 //para el Header
@@ -22,6 +23,9 @@ void cambiarTonalidad(Pixeles*, const float, const int);
 void transformarAGris (Pixeles *, const float, const int);
 void aumentarContraste (Pixeles * , const float , const int);
 void reducirContraste (Pixeles *, const float, const int);
+bool ActualizarDatosHeaderRecorar(HeaderBmp*, AdicDataBmp *, int);
+void ImpactarMarizimagenRecortar(Pixeles **, HeaderBmp * ,unsigned char * , int , FILE* );
+
 /////////////////CODIGO
 
 void cambiarTonalidad(Pixeles* pixel, const float procentaje, int const color)
@@ -74,6 +78,27 @@ void reducirContraste (Pixeles * pixel, const float porcentaje, const int No2)
     }
 }
 
+bool ActualizarDatosHeaderRecorar(HeaderBmp* Header, AdicDataBmp * Data, int porcentaje)
+{
+    Header->palto = (int)( Header->palto * ( ((float)porcentaje)/ ((float)100) ) );
+    Header->pancho = (int)( Header->pancho * ( ((float)porcentaje)/ ((float)100) ) );
+
+    Data->padding = CalcularPadding(Header->pancho);
+    if (!VerificarYGenerarVectorDeDatosPadding(Data))
+    {
+        puts("ERROR DE ASIGNACION DE MEMORIA EN FUNCION: ActualizarDatosHeaderRecorar");
+        return false;
+    }
+    //Recibimos una copia de header y una copia de RestoDataHeader, de lo cual usaremos
+    //PaddingAdd(vector de n bytes de padding) y padding
+
+    Header->tamImag = ((Header->palto) * (Header->pancho)) + (Data->padding * (Header->palto));
+    Header->tamano = Header ->tamImag + Header->inicioDatos;
+    return true;
+}
+
+
+
 void CambiarColorDeImagen(Pixeles** Matriz, FILE* imagenFinal, AdicDataBmp* PaddingInfo,
                              int const color, const float porcentaje,
                                 const int alto, const int ancho, Acciones accion)
@@ -100,6 +125,11 @@ bool imagenTransformada(VecEffectList * Datos, TDAVectList* vecImagen,
         HeaderBmp * Header , FILE* ImagenFinal)
 {
     float valor =0;
+
+    AdicDataBmp CopiaAdicData;
+    HeaderBmp CopiaHeader;
+
+
 
     if (strcmp(Datos->NameEffect, "--tonalidad-azul=")==0)
     {
@@ -157,17 +187,53 @@ bool imagenTransformada(VecEffectList * Datos, TDAVectList* vecImagen,
         CambiarColorDeImagen(Matriz, ImagenFinal, RestoDataImage, 0, valor,
         Header->palto, Header->pancho, aumentarContraste);
         return true;
+
     }
+
+    if (strcmp(Datos->NameEffect, "--recortar=")==0)
+        {
+
+        CopiaHeader = *Header;
+
+        CopiaAdicData.CabeceraDIBext = NULL;
+        CopiaAdicData.PaddingAdd = NULL;
+        CopiaAdicData.padding = 0;
+
+        //CopiaAdicData->CabeceraDIBext esto no se usa, ya que copia el resto de datos 138-54 que
+        //no difieren con la imagen original. siguen estando.
+
+        //Copiamos las estructuras de datos ya que sino estariamos editando la iamgen original,
+        //siendo que si el primer efecto es este, los siguientes trabajarian con una imagen recortada.
+        if(!ActualizarDatosHeaderRecorar(&CopiaHeader, &CopiaAdicData,Datos->ProcentajeAAgregar))
+        {
+            puts("FUNCION RECORTAR TUVO UN ERROR EN MEMORIA, SE OMITIRA ESTA FUNCION");
+            return true;
+        }
+        rewind(ImagenFinal);
+        EscribirHeaderEnImagNueva(&CopiaHeader, ImagenFinal, RestoDataImage->CabeceraDIBext, TamHeaderB);
+        ImpactarMarizimagenRecortar(Matriz,&CopiaHeader , CopiaAdicData.PaddingAdd,
+                            CopiaAdicData.padding, ImagenFinal);
+
+        free(CopiaAdicData.PaddingAdd);  //liberamos el vector padding.
+        //En caso que sea null (no hay padding) la buena practica de inicializarlo como null
+        //le permite al free no fallar.
+        return true;
+    }
+
+
+
+
+
+
+
     return true;
 }
 
 
-void GenerarNuevaImagen(Pixeles **MatrizImagen, HeaderBmp * Header, AdicDataBmp *data, FILE* imagenNueva)
+void ImpactarMarizimagenRecortar(Pixeles **MatrizImagen, HeaderBmp * Header,
+                          unsigned char * PaddingPunt, int padding, FILE* imagenNueva)
 {
     int i, j;
-
-    rewind(imagenNueva);
-    EscribirHeaderEnImagNueva(Header, imagenNueva, data->CabeceraDIBext, TamHeaderB);
 
     for(i=0; i<(Header->palto); i++)
     {
@@ -176,8 +242,8 @@ void GenerarNuevaImagen(Pixeles **MatrizImagen, HeaderBmp * Header, AdicDataBmp 
             fwrite(&MatrizImagen[i][j], sizeof(Pixeles), 1, imagenNueva);
         }
 
-        if(data->padding!= 0)
-            fwrite(data->PaddingAdd, data->padding, 1, imagenNueva);
+        if(padding!= 0)
+            fwrite(PaddingPunt, padding, 1, imagenNueva);
     }
 
 }
@@ -202,7 +268,7 @@ void EscribirHeaderEnImagNueva(HeaderBmp * Header, FILE* imagen,
     fwrite(&Header->coloresUsados, sizeof(Header->coloresUsados),1, imagen);
     fwrite(&Header->coloresImportantes,sizeof(Header->coloresImportantes),1, imagen);
 
-    if(Header->inicioDatos > tamHeader) //SIGNIFICA QUE SI ES 138 EL INICIO Y EL TAM ES 54, HAY PADDING
+    if(Header->inicioDatos > tamHeader) //SIGNIFICA QUE SI ES 138 EL INICIO Y EL TAM ES 54, hay datos adicionales
     {
         fwrite(restoHeader, Header->inicioDatos - tamHeader,1, imagen);
     }

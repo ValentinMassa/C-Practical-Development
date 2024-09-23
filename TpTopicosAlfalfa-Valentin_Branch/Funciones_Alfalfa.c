@@ -133,9 +133,6 @@ int main(int argc, char* argv[])
         fclose(ImagenNueva);
     }
 
-
-
-    //GenerarNuevaImagen(MatrizImagen, &Header, &Data, ImagenFinal);
     RoutineMemoryLiberation(&effectList, &vecImage,&Data , MatrizImagen,Header.palto,Header.pancho );
 
     return  TODO_OK;

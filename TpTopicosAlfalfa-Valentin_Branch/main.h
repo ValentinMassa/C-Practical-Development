@@ -1,6 +1,8 @@
 #ifndef MAIN_H_INCLUDED
 #define MAIN_H_INCLUDED
 
+#include <stdbool.h>
+
 //errores
 #define TODO_OK 0
 #define ERR_APERTURA -1
@@ -88,4 +90,9 @@ typedef struct
     unsigned char pixel[3];
 }Pixeles;
 
+
+
+//FUNCIONES DE AYUDA GENERAL
+int CalcularPadding(int);
+bool VerificarYGenerarVectorDeDatosPadding(AdicDataBmp *);
 #endif // MAIN_H_INCLUDED
