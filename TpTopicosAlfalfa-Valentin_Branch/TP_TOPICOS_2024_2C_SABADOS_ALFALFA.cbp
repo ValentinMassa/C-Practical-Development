@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="--concatenar-vertical ALFALFA_recortar_359.bmp 359.bmp" />
+				<Option parameters="359.bmp --tonalidad-verde=70 --tonalidad-azul=50 --tonalidad-roja=50 --achicar=20 --aumentar-contraste=50 --reducir-contraste=20 --rotar-derecha --rotar-izquierda --espejar-horizontal --espejar-vertical --recortar=50 ALFALFA_recortar_359.bmp --concatenar-horizontal --concatenar-vertical --escala-de-grises" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
@@ -32,29 +32,25 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="Funciones_Alfalfa.c">
+		<Unit filename="funciones_grupo.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="Funciones_Massa.c">
+		<Unit filename="funciones_grupo.h" />
+		<Unit filename="funciones_massa.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="Funciones_Massa.h" />
-		<Unit filename="Funciones_Resano.c">
+		<Unit filename="funciones_massa.h" />
+		<Unit filename="funciones_resano.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="Funciones_Resano.h" />
-		<Unit filename="Funciones_Tomadin.c">
+		<Unit filename="funciones_resano.h" />
+		<Unit filename="funciones_tomadin.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="Funciones_Tomadin.h" />
-		<Unit filename="Soporte_Alfalfa.c">
+		<Unit filename="funciones_tomadin.h" />
+		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="TDA_VECTOR.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="TDA_VECTOR.h" />
-		<Unit filename="main.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

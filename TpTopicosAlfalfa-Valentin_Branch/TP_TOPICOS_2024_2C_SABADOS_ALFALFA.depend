@@ -173,61 +173,50 @@
 	<stdio.h>
 	<stdlib.h>
 
-1727222458 source:d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\funciones_alfalfa.c
+1727303886 source:d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\funciones_alfalfa.c
 	<stdio.h>
 	<stdlib.h>
 	"Funciones_Alfalfa.h"
-	"Funciones_Massa.h"
 	"Funciones_Resano.h"
 
 1727221946 d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\funciones_alfalfa.h
 
-1727221946 d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\funciones_massa.h
-	"main.h"
-	"TDA_VECTOR.h"
+1727307186 d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\funciones_massa.h
 	<stdbool.h>
 
-1727221946 d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\main.h
-	<stdbool.h>
+1727305436 d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\main.h
 
 1727221946 d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\tda_vector.h
 	<stdbool.h>
 	<stdio.h>
 
-1727222453 d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\funciones_resano.h
-	"main.h"
+1727307283 d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\funciones_resano.h
 	"stdbool.h"
-	"TDA_VECTOR.h"
+	"funciones_grupo.h"
 
-1727221946 source:d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\funciones_massa.c
-	"main.h"
-	"TDA_VECTOR.h"
-	"Funciones_Massa.h"
-	<stdio.h>
-	<stdlib.h>
-	<string.h>
-
-1727227327 source:d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\funciones_resano.c
-	<stdio.h>
-	<stdlib.h>
-	<string.h>
-	"main.h"
-	"Funciones_Resano.h"
-	"TDA_VECTOR.h"
-
-1727221946 source:d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\funciones_tomadin.c
-
-1727221946 source:d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\soporte_alfalfa.c
-	"main.h"
-	<stdio.h>
-	<stdlib.h>
-
-1727221946 source:d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\tda_vector.c
+1727305514 source:d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\funciones_massa.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	<stdbool.h>
-	"TDA_VECTOR.h"
+	"funciones_massa.h"
+
+1727306694 source:d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\funciones_resano.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"funciones_resano.h"
+
+1727306666 source:d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\funciones_tomadin.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdbool.h>
+	"funciones_tomadin.h"
+
+1727305571 source:d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\soporte_alfalfa.c
+
+1727305683 source:d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\tda_vector.c
 
 1727222432 d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\funciones_resano.c
 	<stdio.h>
@@ -236,4 +225,23 @@
 	"main.h"
 	"Funciones_Resano.h"
 	"TDA_VECTOR.h"
+
+1727307230 d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\funciones_tomadin.h
+	"funciones_grupo.h"
+
+1727307334 d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\funciones_grupo.h
+	"funciones_rufino.h"
+	<stdbool.h>
+	"funciones_massa.h"
+	"funciones_resano.h"
+	"funciones_tomadin.h"
+
+1727307251 source:d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\funciones_grupo.c
+	<stdio.h>
+	<stdlib.h>
+	"funciones_grupo.h"
+
+1724166196 source:d:\bmpmanipulator\tptopicosalfalfa-valentin_branch\main.c
+	<stdio.h>
+	"funciones_grupo.h"
 

@@ -1,28 +1,10 @@
-#include "main.h"
-#include "TDA_VECTOR.h"
-#include "Funciones_Massa.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include<string.h>
+#include <string.h>
+#include <stdbool.h>
+#include "funciones_massa.h"
 
-/*
-    Integrantes del grupo. En caso de ser un grupo de dos integrantes, no completar el �ltimo campo.
-    Si alguno de los integrantes del grupo dejara la materia, completar de todos modos sus datos, aclarando que no entrega.
-    -----------------
-    Apellido: Antunez
-    Nombre: Matias
-    DNI: 40.808.544
-    Entrega: 05/05/2024
-    -----------------
-    Apellido: Resano
-    Nombre: Federico Mariano
-    DNI: 38.521.538
-    Entrega: 05/05/2024
-    -----------------
 
-    Comentarios (opcionales) que deseen hacer al docente sobre el TP:
-
-*/
 ////ARGV FUNCIONES DE USO PROPIO.
 bool checkArgv(int);
 int TreatmentOfArgv(char*[], int , TDAVectList* , TDAVectList* , VecEffectDefault* , int);
@@ -52,10 +34,124 @@ bool VerificarYAsignarMemoriaDeSerNecHEaderExtendido(HeaderBmp *, AdicDataBmp *,
 
 //Cargar Imag en memoria
 void CargarMatrizImagen(FILE * Imagenbmp, Pixeles **MatrizImagen, const int, const int, const int, const int);
-
-
-
 //
+
+
+bool CreateTdaVectorList(size_t MaxElem, size_t tamData, TDAVectList* vector)
+{
+    void * aux = calloc(MaxElem, tamData);
+
+    if(!aux)
+    {
+        puts("ERROR AL DECLARAR MEMORIA --CreateTdaVectorLista ");
+        vector->vec = NULL;
+        vector->ce = 0;
+        vector->maxElem = 0;
+        vector->sizeE = 0;
+        return false;
+    }
+    vector->vec = aux;
+    vector->ce = 0;
+    vector->maxElem = MaxElem;
+    vector->sizeE = tamData;
+
+    return true;
+}
+
+bool LoadElementsInList_NoRepit(TDAVectList* vect, void* elemnt, Cmp compare)
+{
+    if(vect->maxElem == vect->ce)
+    {
+        puts("Vector Lleno");
+        return false;
+    }
+    if (vect == NULL || elemnt == NULL)
+    {
+        puts("Puntero o elemento NULL");
+        return false;
+    }
+
+    if(vect->ce == 0)
+    {
+        memcpy(vect->vec, elemnt, vect->sizeE);
+        vect->ce = 1;
+        return true;
+    }
+
+    void* point;
+    void* end = vect->vec + (vect->ce * vect->sizeE);
+
+    for(point = vect->vec; point < end; point += vect->sizeE)
+    {
+        if(compare(point,elemnt) == 0)
+        {
+            return true;
+        }
+    }
+
+    memcpy(end, elemnt, vect->sizeE);
+    vect->ce ++;
+    return true;
+}
+
+
+bool LoadElementsInList(TDAVectList* vect, void* elemnt)
+{
+    if(vect->maxElem == vect->ce)
+    {
+        puts("Vector Lleno");
+        return false;
+    }
+    if (vect == NULL || elemnt == NULL)
+    {
+        puts("Puntero o elemento NULL");
+        return false;
+    }
+
+    void* punt = vect->vec + (vect->ce * vect->sizeE);
+
+    memcpy(punt, elemnt, vect->sizeE);
+    vect->ce ++;
+    return true;
+}
+void FreeListMemory(TDAVectList *vector)
+{
+    free(vector->vec);
+    vector->vec = NULL;
+    vector->ce = 0;
+    vector->sizeE = 0;
+    vector->maxElem = 0;
+}
+
+void initializesListStructToDefault(TDAVectList *vector)
+{
+    vector->vec = NULL;
+    vector->ce = 0;
+    vector->sizeE = 0;
+    vector->maxElem = 0;
+}
+
+void* getElementofTDAlist(TDAVectList * vector, int elemnt)
+{
+    return (void*)(vector->vec + (vector->sizeE * elemnt)) ;
+}
+
+int getMAxElementOfTda(TDAVectList * vector)
+{
+    return vector->maxElem;
+}
+
+int getCeOfTda(TDAVectList * vector)
+{
+    return vector->ce;
+}
+
+int getSizeOfTda(TDAVectList * vector)
+{
+    return vector->sizeE;
+}
+
+
 
 void CargarVectorOperaciones(VecEffectDefault * vector)
 {
@@ -579,5 +675,32 @@ bool VerificarYAsignarMemoriaDeSerNecHEaderExtendido(HeaderBmp *header, AdicData
         fread(data->CabeceraDIBext, header->inicioDatos - tamHeader, 1, imagen);
     }
     return true;
+}
+
+bool VerificarYGenerarVectorDeDatosPadding(AdicDataBmp * data)
+{
+    if(data->padding != 0)
+    {
+        data->PaddingAdd = (unsigned char*)calloc(data->padding, sizeof(unsigned char));
+        if(!data->PaddingAdd)
+        {
+            puts("Error asignacion memoria");
+            data->PaddingAdd = NULL;
+           return false;
+        }
+    }
+    return true;
+}
+
+
+int CalcularPadding(int pancho)
+{
+    int padding = 0;
+
+    while( ((pancho*3) + padding) % 4 != 0)
+    {
+        padding ++;
+    }
+    return padding;
 }
 

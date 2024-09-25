@@ -1,11 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "funciones_resano.h"
 
-#include "main.h"
-#include "Funciones_Resano.h"
-#include "TDA_VECTOR.h"
-#include "Funciones_Massa.h"
 
 
 
@@ -21,10 +18,7 @@ void CambiarColorDeImagen(Pixeles**, FILE*, AdicDataBmp*,
 void Comodin(Pixeles**, FILE*, AdicDataBmp*,
                              int const, const float,
                                 const int, const int, Acciones);
-void cambiarTonalidad(Pixeles*, const float, const int);
-void transformarAGris (Pixeles *, const float, const int);
-void aumentarContraste (Pixeles * , const float , const int);
-void reducirContraste (Pixeles *, const float, const int);
+
 bool ActualizarDatosHeader(HeaderBmp*, AdicDataBmp *, const int, const int);
 void ImpactarMatrizmagen(Pixeles **, const int, const int,unsigned char *, int, FILE*);
 void ImpactarMatrizmagenRotarDerecha(Pixeles **, const int, const int,unsigned char *, int, FILE*);
@@ -39,54 +33,6 @@ void LiberarMemoriaFConcatenar(AdicDataBmp *, Pixeles **, const int, const int);
 
 /////////////////CODIGO
 
-void cambiarTonalidad(Pixeles* pixel, const float procentaje, int const color)
-{
-    int valor;
-
-    valor = (int)pixel->pixel[color] * procentaje;
-
-    if(valor > 255)
-        valor = 255;
-
-    pixel->pixel[color] = (unsigned char)valor;
-}
-
-void transformarAGris (Pixeles *pixel,  const float No1, const int No2) // Este seria una copia. Para trabajar con el original (t_pixel *pixel)
-{
-    unsigned char promedio = (pixel->pixel[RED] + pixel->pixel[GREEN] + pixel->pixel[BLUE]) / 3;
-
-    pixel->pixel[RED] = promedio;
-    pixel->pixel[GREEN] = promedio;
-    pixel->pixel[BLUE] = promedio;
-}
-
-void aumentarContraste (Pixeles *pixel , const float porcentaje, const int No2)
-{
-    int i,valorAumentado;
-
-    for(i = 0 ; i < 3; i++)
-    {
-        valorAumentado = pixel->pixel[i] * porcentaje;
-        if(valorAumentado > 255)
-            valorAumentado = 255;
-
-        pixel->pixel[i] = valorAumentado;
-    }
-}
-
-void reducirContraste (Pixeles * pixel, const float porcentaje, const int No2)
-{
-    int i,valorDisminuido;
-
-    for(i = 0 ; i < 3; i++)
-    {
-        valorDisminuido = pixel->pixel[i] * porcentaje;
-        if(valorDisminuido < 0 )
-            valorDisminuido = 0;
-
-        pixel->pixel[i] = valorDisminuido;
-    }
-}
 
 bool ActualizarDatosHeader(HeaderBmp* Header, AdicDataBmp * Data, const int alto, const int ancho)
 {
@@ -245,12 +191,6 @@ bool imagenTransformada(VecEffectList * Datos, TDAVectList* vecImagen,
         CopiaAdicData.CabeceraDIBext = NULL;
         CopiaAdicData.PaddingAdd = NULL;
         CopiaAdicData.padding = 0;
-
-        //CopiaAdicData->CabeceraDIBext esto no se usa, ya que copia el resto de datos 138-54 que
-        //no difieren con la imagen original. siguen estando.
-
-        //Copiamos las estructuras de datos ya que sino estariamos editando la iamgen original,
-        //siendo que si el primer efecto es este, los siguientes trabajarian con una imagen recortada.
         if(!(ActualizarDatosHeader(&CopiaHeader, &CopiaAdicData,
                                          ( (int)( Header->palto * ((float)Datos->ProcentajeAAgregar/ ((float)100)  ))  ),
                                          ( (int)( Header->pancho * ((float)Datos->ProcentajeAAgregar)/ ((float)100)  )) )

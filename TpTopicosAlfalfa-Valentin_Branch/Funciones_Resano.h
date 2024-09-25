@@ -1,11 +1,7 @@
-#ifndef Funciones_Resano_H_INCLUDED
-#define Funciones_Resano_H_INCLUDED
-
-#include "main.h"
+#ifndef funciones_resano_H_INCLUDED
+#define funciones_resano_H_INCLUDED
 #include "stdbool.h"
-#include "TDA_VECTOR.h"
-#include "Funciones_Massa.h"
-
+#include "funciones_grupo.h"
 
 #define BLUE 0
 #define GREEN 1
@@ -16,4 +12,4 @@ bool imagenTransformada(VecEffectList *, TDAVectList*, Pixeles ** , AdicDataBmp 
         HeaderBmp *, FILE*);
 
 
-#endif // Funciones_Resano_H_INCLUDED
+#endif // funciones_resano_H_INCLUDED
