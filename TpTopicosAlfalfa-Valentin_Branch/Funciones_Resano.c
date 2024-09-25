@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "main.h"
 #include "Funciones_Resano.h"
 #include "TDA_VECTOR.h"
+#include "Funciones_Massa.h"
 
 
 
@@ -31,6 +33,9 @@ void ImpactarMatrizHorizontal(Pixeles **, const int , const int , unsigned char 
 void ImpactarMatrizVertical(Pixeles **, const int , const int , unsigned char * , int , FILE* );
 void AchicarImagen(Pixeles **MatrizImagen, const int nuevoAlto, const int nuevoAncho,  const int originalAncho, const int originalAlto,
                           unsigned char * PaddingPunt, int padding, FILE* imagenNueva, int porcentaje);
+bool ConcatenarHorizontal(HeaderBmp *, AdicDataBmp *, Pixeles **, Pixeles **, AdicDataBmp *, HeaderBmp *, FILE* );
+bool ConcatenarVertical(HeaderBmp *Header_Dos, AdicDataBmp *, Pixeles **, Pixeles **,AdicDataBmp *, HeaderBmp *, FILE*);
+void LiberarMemoriaFConcatenar(AdicDataBmp *, Pixeles **, const int, const int);
 
 /////////////////CODIGO
 
@@ -99,10 +104,6 @@ bool ActualizarDatosHeader(HeaderBmp* Header, AdicDataBmp * Data, const int alto
 
     Header->tamImag = ((Header->palto) * (Header->pancho)) + (Data->padding * (Header->palto));
     Header->tamano = Header ->tamImag + Header->inicioDatos;
-    printf("tamano: %d", ((Header->palto) * (Header->pancho)));
-
-    printf("padding : %d", Data->padding);
-    printf("inicio datos : %d", Header->inicioDatos);
     return true;
 }
 
@@ -163,6 +164,13 @@ bool imagenTransformada(VecEffectList * Datos, TDAVectList* vecImagen,
     float valor =0;
     AdicDataBmp CopiaAdicData;
     HeaderBmp CopiaHeader;
+
+    HeaderBmp NuevaImagenHeader;
+    AdicDataBmp NuevadataImagen;
+    Pixeles ** M_NuevaImagen;
+    FILE * F_ImagenNueva;
+
+
 
      if (strcmp(Datos->NameEffect, "--comodin")==0)
     {
@@ -347,8 +355,232 @@ bool imagenTransformada(VecEffectList * Datos, TDAVectList* vecImagen,
 
     }
 
+    if (strcmp(Datos->NameEffect, "--concatenar-horizontal")==0 || strcmp(Datos->NameEffect, "--concatenar-vertical")==0 )
+    {
+        if(getCeOfTda(vecImagen) == 1)
+        {
+            puts("Se indico una accion concatenar pero el parametro Imagen a concatenar fue omitido");
+            puts("Se cancelara este efecto");
+            return true;
+        }
+        NuevadataImagen.CabeceraDIBext = NULL;
+        NuevadataImagen.PaddingAdd = NULL;
+        M_NuevaImagen  = NULL;
+
+        F_ImagenNueva = AbrirImagen((char*)getElementofTDAlist(vecImagen, 1), AperturaBin);
+        if(!F_ImagenNueva)
+        {
+            puts("Error al abrir la imagen a concatenar");
+            puts("Se cancelara este efecto");
+            return true;
+        }
+
+        if (LoadImageInMemory(&NuevaImagenHeader, &NuevadataImagen, F_ImagenNueva, &M_NuevaImagen) != TODO_OK)
+        {
+            puts("ERROR AL CARGAR LA IMAGEN A CONCATENAR EN MEMORIA");
+            puts("Se cancelara este efecto");
+            LiberarMemoriaFConcatenar(&NuevadataImagen, M_NuevaImagen, NuevaImagenHeader.pancho, NuevaImagenHeader.palto);
+            return true;
+        }
+        fclose(F_ImagenNueva);
+
+
+        if (strcmp(Datos->NameEffect, "--concatenar-horizontal")==0)
+        {
+           ConcatenarHorizontal(&NuevaImagenHeader, &NuevadataImagen, M_NuevaImagen, Matriz, RestoDataImage, Header,ImagenFinal);
+           LiberarMemoriaFConcatenar(&NuevadataImagen, M_NuevaImagen, NuevaImagenHeader.pancho, NuevaImagenHeader.palto);
+           return true;
+
+        }
+        else
+        {
+            ConcatenarVertical(&NuevaImagenHeader, &NuevadataImagen, M_NuevaImagen, Matriz, RestoDataImage, Header,ImagenFinal);
+            LiberarMemoriaFConcatenar(&NuevadataImagen, M_NuevaImagen, NuevaImagenHeader.pancho, NuevaImagenHeader.palto);
+            return true;
+        }
+        return true;
+    }
+
     return true;
 }
+
+bool ConcatenarVertical(HeaderBmp *Header_Dos, AdicDataBmp * Data_Dos, Pixeles ** M_Dos, Pixeles ** M_Uno,
+                     AdicDataBmp * Data_Uno, HeaderBmp * Header_Uno, FILE* ImagenFinal)
+{
+    HeaderBmp HeaderFinal = * Header_Uno;
+    AdicDataBmp DataFinal;
+
+    int i, j, ancho=0;
+
+    Pixeles PixelAInsertar;
+
+    PixelAInsertar.pixel[RED] = 128;
+    PixelAInsertar.pixel[BLUE] = 128;
+    PixelAInsertar.pixel[GREEN] = 128;
+
+    if(Header_Uno->pancho >= Header_Dos->pancho)
+    {
+        ancho = Header_Uno->pancho;
+    }
+    else
+    {
+        ancho = Header_Dos->pancho;
+    }
+
+    if(!(ActualizarDatosHeader(&HeaderFinal, &DataFinal, ((Header_Uno->palto) + (Header_Dos->palto)) , ancho) ))
+    {
+        puts("ConcatenarVertical Tuvo un error a la hora de actualizar datos header");
+        puts("Cancelando efecto");
+        return false;
+    }
+
+    rewind(ImagenFinal);
+    EscribirHeaderEnImagNueva(&HeaderFinal, ImagenFinal, Data_Uno->CabeceraDIBext, TamHeaderB);
+
+    if(Header_Uno->pancho >= Header_Dos->pancho)
+    {
+        ImpactarMatrizmagen(M_Uno, Header_Uno->palto, Header_Uno->pancho, DataFinal.PaddingAdd, DataFinal.padding, ImagenFinal);
+        for(i=0; i< Header_Dos->palto; i++)
+        {
+            for(j=0;j < Header_Dos->pancho ; j++)
+            {
+                fwrite(&M_Dos[i][j], sizeof(Pixeles), 1, ImagenFinal);
+            }
+            for(j=0; j < (HeaderFinal.pancho - Header_Dos->pancho); j++)
+            {
+                fwrite(&PixelAInsertar, sizeof(Pixeles), 1, ImagenFinal);
+            }
+            if(DataFinal.padding!= 0)
+                fwrite(DataFinal.PaddingAdd, DataFinal.padding, 1, ImagenFinal);
+        }
+
+    }
+
+    if(Header_Dos->pancho > Header_Uno->pancho)
+    {
+        ImpactarMatrizmagen(M_Dos, Header_Dos->palto, Header_Dos->pancho, DataFinal.PaddingAdd, DataFinal.padding, ImagenFinal);
+        for(i=0; i< Header_Uno->palto; i++)
+        {
+            for(j=0;j < Header_Uno->pancho ; j++)
+            {
+                fwrite(&M_Uno[i][j], sizeof(Pixeles), 1, ImagenFinal);
+            }
+            for(j=0; j < (HeaderFinal.pancho - Header_Uno->pancho); j++)
+            {
+                fwrite(&PixelAInsertar, sizeof(Pixeles), 1, ImagenFinal);
+            }
+            if(DataFinal.padding!= 0)
+                fwrite(DataFinal.PaddingAdd, DataFinal.padding, 1, ImagenFinal);
+        }
+
+    }
+
+    free(DataFinal.PaddingAdd);
+    return true;
+}
+
+bool ConcatenarHorizontal(HeaderBmp *Header_Dos, AdicDataBmp * Data_Dos, Pixeles ** M_Dos, Pixeles ** M_Uno,
+                     AdicDataBmp * Data_Uno, HeaderBmp * Header_Uno, FILE* ImagenFinal)
+{
+    HeaderBmp HeaderFinal = * Header_Uno;
+    AdicDataBmp DataFinal;
+
+    int i,j;
+
+    Pixeles PixelAInsertar;
+
+    PixelAInsertar.pixel[RED] = 128;
+    PixelAInsertar.pixel[BLUE] = 128;
+    PixelAInsertar.pixel[GREEN] = 128;
+
+
+
+    int alto = 0;
+
+    if (Header_Uno->palto >= Header_Dos->pancho)
+    {
+        alto = Header_Uno->palto;
+    }
+    else
+        alto = Header_Dos->palto;
+
+
+
+    if(!(ActualizarDatosHeader(&HeaderFinal, &DataFinal, alto, ((Header_Uno->pancho) + (Header_Dos->pancho)) ) ) )
+    {
+        puts("Concatenar Horizontal Tuvo un error a la hora de actualizar datos header");
+        puts("Cancelando efecto");
+        return false;
+    }
+
+    rewind(ImagenFinal);
+    EscribirHeaderEnImagNueva(&HeaderFinal, ImagenFinal, Data_Uno->CabeceraDIBext, TamHeaderB);
+
+    i=0;
+
+    while( i < (Header_Uno->palto) && i<(Header_Dos->palto) && i < alto)
+    {
+        for(j = 0; j< Header_Uno->pancho; j++)
+        {
+            fwrite(&M_Uno[i][j], sizeof(Pixeles), 1, ImagenFinal);
+        }
+
+        for(j = 0; j< Header_Dos->pancho; j++)
+        {
+            fwrite(&M_Dos[i][j], sizeof(Pixeles), 1, ImagenFinal);
+        }
+
+        if(DataFinal.padding!= 0)
+            fwrite(DataFinal.PaddingAdd, DataFinal.padding, 1, ImagenFinal);
+
+        i++;
+    }
+
+    while(i < Header_Uno->palto)
+    {
+        for(j = 0; j< Header_Uno->pancho; j++)
+        {
+            fwrite(&M_Uno[i][j], sizeof(Pixeles), 1, ImagenFinal);
+        }
+        for(j = 0; j< Header_Dos->pancho; j++)
+        {
+            fwrite(&PixelAInsertar, sizeof(Pixeles), 1, ImagenFinal);
+        }
+
+        if(DataFinal.padding!= 0)
+            fwrite(DataFinal.PaddingAdd, DataFinal.padding, 1, ImagenFinal);
+        i++;
+    }
+
+    while(i < Header_Dos->palto)
+    {
+        for(j = 0; j< Header_Uno->pancho; j++)
+        {
+            fwrite(&PixelAInsertar, sizeof(Pixeles), 1, ImagenFinal);
+        }
+        for(j = 0; j< Header_Dos->pancho; j++)
+        {
+            fwrite(&M_Dos[i][j], sizeof(Pixeles), 1, ImagenFinal);
+        }
+
+        if(DataFinal.padding!= 0)
+            fwrite(DataFinal.PaddingAdd, DataFinal.padding, 1, ImagenFinal);
+        i++;
+    }
+
+    free(DataFinal.PaddingAdd);
+    return true;
+}
+
+
+void LiberarMemoriaFConcatenar(AdicDataBmp * data, Pixeles ** matriz, const int ancho, const int alto)
+{
+    free(data->CabeceraDIBext);
+    free(data->PaddingAdd);
+
+    EliminarmatrizDIN_Pixeles(matriz, alto, ancho);
+}
+
 
 void AchicarImagen(Pixeles **MatrizImagen, const int nuevoAlto, const int nuevoAncho, const int originalAncho, const int originalAlto,
                           unsigned char * PaddingPunt, int padding, FILE* imagenNueva, int porcentaje)

@@ -4,6 +4,7 @@
 
 #include "main.h"
 #include "TDA_VECTOR.h"
+
 #include <stdbool.h>
 
 //ARGV
@@ -16,6 +17,7 @@ void RoutineMemoryLiberation(TDAVectList*, TDAVectList* ,AdicDataBmp*, Pixeles *
 
 //general
 int LoadImageInMemory(HeaderBmp *,AdicDataBmp *, FILE*, Pixeles***);
+
 //
 
 void GenerarNuevaImagen(Pixeles **, HeaderBmp * , AdicDataBmp* , FILE*);
@@ -26,7 +28,7 @@ void VerificarYLiberarMemoriaData(AdicDataBmp *data);
 
 void CargarVectorOperaciones(VecEffectDefault*);
 FILE* AbrirImagen(char*, char*);
-
+void EliminarmatrizDIN_Pixeles(Pixeles**, const int, const int);
 ///////////
 
 void LoadAuxWithData(VecEffectList *, TDAVectList *, const int);

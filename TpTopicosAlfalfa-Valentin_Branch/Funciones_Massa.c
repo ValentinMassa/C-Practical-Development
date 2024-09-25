@@ -42,7 +42,7 @@ void RoutineMemoryArgvLiberation(TDAVectList*, TDAVectList*);
 ////IMAGE IN MEMORY
 //MATRIZ
 Pixeles** CrearmatrizDIN_Pixel(const int, const int);
-void EliminarmatrizDIN_Pixeles(Pixeles**, const int, const int);
+
 //HEADER
 int CargarHeaderEnMemoriaYcargarData(HeaderBmp*, AdicDataBmp *, FILE*);
 bool VerificarQueEsBMP(HeaderBmp*, FILE*, char, char);
@@ -375,54 +375,8 @@ void RoutineMemoryLiberation(TDAVectList* VecEfectTDA,
 ////////////////////header////////
 
 
-int LoadImageInMemory(HeaderBmp * Header, AdicDataBmp * Data, FILE* Imagenbmp, Pixeles*** MatrizImagen)
-{
-    int resultado;
 
-    resultado = CargarHeaderEnMemoriaYcargarData(Header,Data,Imagenbmp);
-    if(resultado != 0)
-    {
-        if(resultado == ERR_FORMATO)
-            return ERR_FORMATO;
-        else
-            return ERR_ASIG_MEM;
-    }
-    *MatrizImagen = CrearmatrizDIN_Pixel(Header->palto, Header->pancho);
 
-    if(!(*MatrizImagen))
-        return ERR_MATRIZ_CREACION;
-
-    CargarMatrizImagen(Imagenbmp, *MatrizImagen,
-                       Header->palto, Header->pancho ,Header->inicioDatos, Data->padding);
-    return  TODO_OK;
-}
-
-Pixeles ** CrearmatrizDIN_Pixel(const int p_cant_f, const int p_cant_c)
-{
-    int i,j;
-    Pixeles** matriz = (Pixeles**) malloc(p_cant_f * sizeof(Pixeles*));
-    if(!matriz)
-    {
-        puts("ERROR EN LA PRIMER ASIGNACION DE MEMORIA DE LA MATRIZ");
-        return NULL;
-    }
-
-    for(i=0; i< (p_cant_f); i++)
-    {
-        matriz[i] = (Pixeles*) malloc(sizeof(Pixeles) * p_cant_c);
-        if(!matriz[i])
-        {
-            for(j=i; j>=0; j--)
-            {
-                free(matriz[j]);
-            }
-            free(matriz);
-            puts("ERROR EN LA ASIGNACION DE MEMORIA DE LA MATRIZ , MEM. EXCEDIDA");
-            return NULL;
-        }
-    }
-    return matriz;
-}
 void EliminarmatrizDIN_Pixeles(Pixeles** matriz, const int cant_f, const int cant_c)
 {
     int i;
@@ -436,25 +390,7 @@ void EliminarmatrizDIN_Pixeles(Pixeles** matriz, const int cant_f, const int can
         free(matriz);
     }
 }
-int CargarHeaderEnMemoriaYcargarData(HeaderBmp* header, AdicDataBmp *data , FILE* imagen)
-{
-    if(VerificarQueEsBMP(header, imagen, TipoBmpB, TipoBmpM) != true)
-        return ERR_FORMATO;
 
-    LeerHeaderBmp(header,imagen);
-
-    if(VerificarYAsignarMemoriaDeSerNecHEaderExtendido(header,data,imagen, TamHeaderB)!= true)
-        return ERR_ASIG_MEM;
-
-    data->padding = CalcularPadding(header->pancho);
-
-    if(VerificarYGenerarVectorDeDatosPadding(data)!= true)
-    {
-        return ERR_ASIG_MEM;
-    }
-    return TODO_OK;
-
-}
 
 bool VerificarQueEsBMP(HeaderBmp* header, FILE* imagen, char Letra1, char Letra2)
 {
@@ -487,22 +423,7 @@ void LeerHeaderBmp(HeaderBmp* header, FILE* imagen)
     fread(&header->coloresImportantes, sizeof(unsigned char), sizeof(header->coloresImportantes), imagen);
 }
 
-bool VerificarYAsignarMemoriaDeSerNecHEaderExtendido(HeaderBmp *header, AdicDataBmp *data ,
-                                                     FILE*imagen, const int tamHeader)
-{
-    if(header->inicioDatos > tamHeader)
-    {
-        data->CabeceraDIBext = (unsigned char*)calloc(header->inicioDatos - tamHeader, sizeof(unsigned char));
-        if(!data->CabeceraDIBext)
-        {
-            puts("Error asignacion memoria");
-            data->CabeceraDIBext = NULL;
-            return false;
-        }
-        fread(data->CabeceraDIBext, header->inicioDatos - tamHeader, 1, imagen);
-    }
-    return true;
-}
+
 
 void VerificarYLiberarMemoriaData(AdicDataBmp * data)
 {
@@ -514,26 +435,6 @@ void VerificarYLiberarMemoriaData(AdicDataBmp * data)
         free(data->PaddingAdd);
 }
 
-
-
-void CargarMatrizImagen(FILE * Imagenbmp, Pixeles **MatrizImagen, const int alto,
-                        const int ancho, const int offset, const int padding)
-{
-    int i,j;
-
-    fseek(Imagenbmp, 1L * offset, SEEK_SET);
-
-    for(i=0; i < alto; i ++)
-    {
-
-        for(j=0; j<ancho; j++)
-        {
-            fread(&MatrizImagen[i][j], sizeof(Pixeles),1, Imagenbmp);
-        }
-        if (padding != 0)
-            fseek(Imagenbmp,padding, SEEK_CUR);
-    }
-}
 
 ///////////////////////////
 
@@ -573,5 +474,110 @@ void CrearNombreDeArchivo(char* nombre, char* Final, char* nombreImagen)
         *pointer = '_';
     }
     strcat(Final, nombreImagen);
+}
+
+int LoadImageInMemory(HeaderBmp * Header, AdicDataBmp * Data, FILE* Imagenbmp, Pixeles*** MatrizImagen)
+{
+    int resultado;
+
+    resultado = CargarHeaderEnMemoriaYcargarData(Header,Data,Imagenbmp);
+    if(resultado != 0)
+    {
+        if(resultado == ERR_FORMATO)
+            return ERR_FORMATO;
+        else
+            return ERR_ASIG_MEM;
+    }
+    *MatrizImagen = CrearmatrizDIN_Pixel(Header->palto, Header->pancho);
+
+    if(!(*MatrizImagen))
+        return ERR_MATRIZ_CREACION;
+
+    CargarMatrizImagen(Imagenbmp, *MatrizImagen,
+                       Header->palto, Header->pancho ,Header->inicioDatos, Data->padding);
+    return  TODO_OK;
+}
+
+int CargarHeaderEnMemoriaYcargarData(HeaderBmp* header, AdicDataBmp *data , FILE* imagen)
+{
+    if(VerificarQueEsBMP(header, imagen, TipoBmpB, TipoBmpM) != true)
+        return ERR_FORMATO;
+
+    LeerHeaderBmp(header,imagen);
+
+    if(VerificarYAsignarMemoriaDeSerNecHEaderExtendido(header,data,imagen, TamHeaderB)!= true)
+        return ERR_ASIG_MEM;
+
+    data->padding = CalcularPadding(header->pancho);
+
+    if(VerificarYGenerarVectorDeDatosPadding(data)!= true)
+    {
+        return ERR_ASIG_MEM;
+    }
+    return TODO_OK;
+
+}
+
+Pixeles ** CrearmatrizDIN_Pixel(const int p_cant_f, const int p_cant_c)
+{
+    int i,j;
+    Pixeles** matriz = (Pixeles**) malloc(p_cant_f * sizeof(Pixeles*));
+    if(!matriz)
+    {
+        puts("ERROR EN LA PRIMER ASIGNACION DE MEMORIA DE LA MATRIZ");
+        return NULL;
+    }
+
+    for(i=0; i< (p_cant_f); i++)
+    {
+        matriz[i] = (Pixeles*) malloc(sizeof(Pixeles) * p_cant_c);
+        if(!matriz[i])
+        {
+            for(j=i; j>=0; j--)
+            {
+                free(matriz[j]);
+            }
+            free(matriz);
+            puts("ERROR EN LA ASIGNACION DE MEMORIA DE LA MATRIZ , MEM. EXCEDIDA");
+            return NULL;
+        }
+    }
+    return matriz;
+}
+
+void CargarMatrizImagen(FILE * Imagenbmp, Pixeles **MatrizImagen, const int alto,
+                        const int ancho, const int offset, const int padding)
+{
+    int i,j;
+
+    fseek(Imagenbmp, 1L * offset, SEEK_SET);
+
+    for(i=0; i < alto; i ++)
+    {
+
+        for(j=0; j<ancho; j++)
+        {
+            fread(&MatrizImagen[i][j], sizeof(Pixeles),1, Imagenbmp);
+        }
+        if (padding != 0)
+            fseek(Imagenbmp,padding, SEEK_CUR);
+    }
+}
+
+bool VerificarYAsignarMemoriaDeSerNecHEaderExtendido(HeaderBmp *header, AdicDataBmp *data ,
+                                                     FILE*imagen, const int tamHeader)
+{
+    if(header->inicioDatos > tamHeader)
+    {
+        data->CabeceraDIBext = (unsigned char*)calloc(header->inicioDatos - tamHeader, sizeof(unsigned char));
+        if(!data->CabeceraDIBext)
+        {
+            puts("Error asignacion memoria");
+            data->CabeceraDIBext = NULL;
+            return false;
+        }
+        fread(data->CabeceraDIBext, header->inicioDatos - tamHeader, 1, imagen);
+    }
+    return true;
 }
 

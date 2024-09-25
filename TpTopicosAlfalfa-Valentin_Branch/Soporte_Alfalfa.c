@@ -30,4 +30,6 @@ int CalcularPadding(int pancho)
     return padding;
 }
 
+
+
 ////

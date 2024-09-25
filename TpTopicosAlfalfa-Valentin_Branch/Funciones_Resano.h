@@ -4,6 +4,7 @@
 #include "main.h"
 #include "stdbool.h"
 #include "TDA_VECTOR.h"
+#include "Funciones_Massa.h"
 
 
 #define BLUE 0

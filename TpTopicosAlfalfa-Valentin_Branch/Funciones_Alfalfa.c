@@ -23,9 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 #include "Funciones_Alfalfa.h"
-#include "Funciones_Massa.h"
 #include "Funciones_Resano.h"
 
 
@@ -59,7 +57,6 @@ int main(int argc, char* argv[])
 
     //ARGV PRIMERA PARTE
     CargarVectorOperaciones(effectDefault);
-
     resultado = ResultOfArgvOperations(argv, argc, &effectList, &vecImage, effectDefault,
                                 TamMaxVecEffectDefault);
     if(resultado != TODO_OK)
@@ -132,8 +129,8 @@ int main(int argc, char* argv[])
         imagenTransformada(&Effaux, &vecImage, MatrizImagen, &Data, &Header, ImagenNueva);
         fclose(ImagenNueva);
     }
-
-    RoutineMemoryLiberation(&effectList, &vecImage,&Data , MatrizImagen,Header.palto,Header.pancho );
+    puts("Proceso realizado exitosamente");
+    RoutineMemoryLiberation(&effectList, &vecImage,&Data , MatrizImagen,Header.palto,Header.pancho);
 
     return  TODO_OK;
 }
