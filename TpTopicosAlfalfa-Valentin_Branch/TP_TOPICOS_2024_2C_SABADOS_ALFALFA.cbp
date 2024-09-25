@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="359.bmp  --recortar=60 --rotar-derecha --rotar-izquierda --espejar-horizontal --espejar-vertical" />
+				<Option parameters="359.bmp  --achicar=10 --reducir-contraste=10" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
