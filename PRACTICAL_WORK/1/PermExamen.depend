@@ -1,0 +1,46 @@
+# depslib dependency file v1.0
+1730806960 source:d:\git\programacion\exams\2024-11-05-permutado\permalumno\main.c
+	<stdio.h>
+	<stdlib.h>
+	"gbib.h"
+
+1730381237 d:\git\programacion\exams\2024-11-05-permutado\permalumno\gbib.h
+
+1730381326 source:d:\git\programacion\exams\2024-11-05-permutado\permalumno\gbib.c
+
+1731677030 source:d:\git\programacion\exams\permutadocolumna\permalumno\gbib.c
+
+1732024136 source:d:\git\programacion\exams\permutadocolumna\permalumno\main.c
+	<stdio.h>
+	<stdlib.h>
+	"gbib.h"
+
+1731677031 d:\git\programacion\exams\permutadocolumna\permalumno\gbib.h
+
+1732048957 source:c:\users\laboratorios.unlmlab\desktop\43920122_hoz_lucas_r\gbib.c
+	<stdarg.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"./gbib.h"
+
+1732038807 source:c:\users\laboratorios.unlmlab\desktop\43920122_hoz_lucas_r\main.c
+	<stdio.h>
+	<stdlib.h>
+	"gbib.h"
+
+1732048612 c:\users\laboratorios.unlmlab\desktop\43920122_hoz_lucas_r\gbib.h
+
+1732852431 source:c:\users\valee\desktop\todo_valen\facultad\topicos de programacion\cursada 2c2024\ejercicios 2024\parciales2024_resueltos\parcial_2c2024_2do\main.c
+	<stdio.h>
+	<stdlib.h>
+	"SOLUCION.h"
+
+1732847930 c:\users\valee\desktop\todo_valen\facultad\topicos de programacion\cursada 2c2024\ejercicios 2024\parciales2024_resueltos\parcial_2c2024_2do\solucion.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
+1732852284 source:c:\users\valee\desktop\todo_valen\facultad\topicos de programacion\cursada 2c2024\ejercicios 2024\parciales2024_resueltos\parcial_2c2024_2do\solucion.c
+	"SOLUCION.h"
+
