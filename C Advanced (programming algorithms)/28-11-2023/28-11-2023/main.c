@@ -14,7 +14,7 @@ int main()
     puts("-----------------------------------------------------------------");
 
 
-    processStock(NAME_BIN, NAME_TXT, NAME_STOCK_REQUIRED, NAME_ORDERS_DONE);
+    processOrders(NAME_BIN, NAME_TXT, NAME_STOCK_REQUIRED, NAME_ORDERS_DONE);
 
 
 
