@@ -1,0 +1,14 @@
+#ifndef DEFINES_H_INCLUDED
+#define DEFINES_H_INCLUDED
+
+#define SIZE_ASSIGMENT 20
+#define SIZE_ACADEMIC_YEAR 5
+
+#define NAME_FILE_IDX_STUDENTS "students.idx"
+#define DEFAULT_NAME_FILE_TXT_STUDENT "report.txt"
+
+#define FINAL_SIZE 20
+
+
+
+#endif // DEFINES_H_INCLUDED

@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "../list/main.h"
 #include "../queue/main.h"
 #include <time.h>
 
