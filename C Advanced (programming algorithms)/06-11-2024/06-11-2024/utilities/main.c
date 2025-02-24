@@ -60,9 +60,7 @@ void menu(char* namebook)
                 break;
             }
             case 2:{
-                invertList(&words);
-                walkList(&words, NULL, 0, printWordsAndEcho);
-                sortList(&words, compeareEcho);
+                walkListReverse(&words, NULL, 0, printWordsAndEcho);
                 break;
             }
             case 3:{

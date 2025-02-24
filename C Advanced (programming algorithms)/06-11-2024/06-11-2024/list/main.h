@@ -18,5 +18,6 @@ int showFirst(const tlist * l, void*data, unsigned sized);
 int showLast(const tlist * l, void*data, unsigned sized);
 void walkList(tlist *l, void* param, unsigned sized,void(*action)(void*, void*, unsigned, unsigned));
 void invertList(tlist *l);
+void walkListReverse(tlist *l, void* param, unsigned sized,void(*action)(void*, void*, unsigned, unsigned));
 
 #endif // MAIN_H_INCLUDED

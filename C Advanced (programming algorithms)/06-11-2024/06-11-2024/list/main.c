@@ -127,3 +127,12 @@ void invertList(tlist *l)
     return;
 
 }
+
+void walkListReverse(tlist *l, void* param, unsigned sized,void(*action)(void*, void*, unsigned, unsigned))
+{
+    if(!*l)return;
+
+    walkListReverse(&(*l)->next,param,sized,action);
+    action((*l)->data, param, (*l)->sized, sized);
+    return;
+}
